@@ -1,4 +1,24 @@
 {
+<<<<<<< HEAD
+	"scripts": {
+		"start": "ts-node src/index.ts",
+		"build": "tsc",
+		"server": "node dist/index.js"
+	},
+	"dependencies": {
+		"@clerk/clerk-sdk-node": "^4.13.14",
+		"@types/cookies": "^0.9.0",
+		"@types/express": "^4.17.21",
+		"@types/jsonwebtoken": "^9.0.6",
+		"@types/node": "^20.12.7",
+		"cookies": "^0.9.1",
+		"dotenv": "^16.4.5",
+		"express": "^4.19.2",
+		"jsonwebtoken": "^9.0.2",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.4.5"
+	}
+=======
   "scripts": {
     "start": "ts-node src/index.ts",
     "build": "tsc",
@@ -17,4 +37,5 @@
   "devDependencies": {
     "prisma": "^5.12.1"
   }
+>>>>>>> 6ac3eff15330ef500a04212982b821961e9f5423
 }
