@@ -55,4 +55,3 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 postgres_data/
-pnpm-lock.yaml
