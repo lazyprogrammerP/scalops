@@ -13,7 +13,8 @@ app.get('/', (req: Request, res: Response) => {
 
 app.get('/test', clerkAuth, (req: Request, res: Response) => {
     res.status(200).json({ message: 'you are authenticated', status: 'success' });
+});
 
-    app.listen(port, () => {
-        console.log(`server running on http://localhost:${port}`);
-    });
+app.listen(port, () => {
+    console.log(`server running on http://localhost:${port}`);
+});
