@@ -13,13 +13,215 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id String @id @default(uuid())
+enum KYCDocument {
+  PASSPORT
+  DRIVERS_LICENSE
+  NATIONAL_ID
+}
 
-  firstName String
-  lastName  String
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum TransactionMethod {
+  CASH
+  CASHLESS
+}
+
+model User {
+  id       String @id @default(uuid())
+  clerkSub String @unique
+
+  firstName String?
+  lastName  String?
 
   email String @unique
+
+  documents Document[]
+  kycRecord KYCRecord?
+
+  store Store?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Document {
+  id String @id @default(uuid())
+
+  url  String
+  name String
+
+  kycRecord KYCRecord?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model KYCRecord {
+  id String @id @default(uuid())
+
+  documentType KYCDocument
+
+  documentId String   @unique
+  document   Document @relation(fields: [documentId], references: [id])
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Address {
+  id String @id @default(uuid())
+
+  alias String
+
+  main     String
+  landmark String
+  city     String
+  state    String
+  zip      String
+
+  storeId String @unique
+  store   Store  @relation(fields: [storeId], references: [id])
+
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Store {
+  id String @id @default(uuid())
+
+  name String
+
+  address Address?
+  account Account?
+
+  products Product[]
+
+  orders Order[]
+
+  userId String @unique
+  users  User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id String @id @default(uuid())
+
+  buyer String
+
+  addressId       String?
+  deliveryAddress Address? @relation(fields: [addressId], references: [id])
+
+  orderProducts OrderProduct[]
+
+  payment Payment?
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id String @id @default(uuid())
+
+  name        String
+  description String
+  price       Float
+  image       String
+
+  barcode String @unique
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id])
+
+  orderedUnits OrderProduct[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderProduct {
+  id String @id @default(uuid())
+
+  quantity Int
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id String @id @default(uuid())
+
+  balance Float @default(0)
+
+  beneficiary   String
+  bank          String
+  branch        String
+  ifsc          String
+  accountNumber BigInt
+
+  storeId String @unique
+  store   Store  @relation(fields: [storeId], references: [id])
+
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id String @id @default(uuid())
+
+  amount Float
+
+  razorpayRecieptNumber String
+
+  recieved  Boolean @default(false)
+  disbursed Boolean @default(false)
+
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  transactionId String      @unique
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id String @id @default(uuid())
+
+  label  String
+  amount Float
+
+  type   TransactionType
+  method TransactionMethod
+
+  payment Payment?
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
